@@ -1,1 +1,1 @@
-// Getstarted button by css getByRole('link', { name: 'Running and debugging tests' })
+// Getstarted button by css getByRole('link', { name: 'Annotations' })
