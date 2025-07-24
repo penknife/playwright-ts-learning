@@ -1,25 +1,25 @@
-import { test, expect } from '@playwright/test';
+import test, { expect } from "@playwright/test";
+
+
+test.beforeEach(async ({ page }) => {
+  await page.goto('https://playwright.dev');
+});
 
 test('Playwright site has title', async ({ page }) => {
-  await page.goto('https://playwright.dev');
-  await expect(page).toHaveTitle(/Playwright/);
+  await expect(page, 'Playwright site does not have the expected title').toHaveTitle(/Playwright/);
 });
 
 test('Playwright site has a visible and working Get Started button', async ({ page }) => {
-  await page.goto('https://playwright.dev');
   const getStarted = page.getByRole('link', { name: 'Get started' });
-  await expect(getStarted).toBeVisible();
   await getStarted.click();
-  await expect(page).toHaveURL(/.*docs\/intro/);
+  await expect(page, 'Get started page is not opened after click on get Started button').toHaveURL(/.*docs\/intro/);
 });
 
 test('Playwright Get Started page: switch from Node.js to .NET in header language dropdown', async ({ page }) => {
-  await page.goto('https://playwright.dev');
   await page.getByRole('link', { name: 'Get started' }).click();
 
   // The language dropdown should show Node.js by default
   const languageDropdown = page.getByRole('button', { name: /Node\.js/ });
-  await expect(languageDropdown).toBeVisible();
   await languageDropdown.click();
 
   // Select the .NET option
@@ -32,7 +32,6 @@ test('Playwright Get Started page: switch from Node.js to .NET in header languag
 });
 
 test('Playwright Getting Started: select .NET and navigate to Writing tests', async ({ page }) => {
-  await page.goto('https://playwright.dev');
   await page.getByRole('link', { name: 'Get started' }).click();
 
   // Switch to .NET in the language dropdown
@@ -56,5 +55,8 @@ test('Playwright Getting Started: select .NET and navigate to Writing tests', as
   await expect(page.getByRole('navigation', { name: 'Main' })).toContainText('Playwright for .NET');
 });
 
-
-
+test('example 1', async ({ page }) => {
+  // preconditions 
+  // actions 
+  // assertions
+});
