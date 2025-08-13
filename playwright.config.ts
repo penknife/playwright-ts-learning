@@ -12,11 +12,13 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  timeout: 30000,
   testDir: './tests',
+  testMatch: '**/*tests.ts',
   /* Run tests in files in parallel */
-  /*fullyParallel: true,
+  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  /*forbidOnly: !!process.env.CI,
+  forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   /*retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */

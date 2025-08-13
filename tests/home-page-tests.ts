@@ -1,4 +1,5 @@
 import test, { expect } from "@playwright/test";
+import { get } from "http";
 
 
 test.beforeEach(async ({ page }) => {
@@ -55,8 +56,67 @@ test('Playwright Getting Started: select .NET and navigate to Writing tests', as
   await expect(page.getByRole('navigation', { name: 'Main' })).toContainText('Playwright for .NET');
 });
 
-test('example 1', async ({ page }) => {
-  // preconditions 
-  // actions 
-  // assertions
+test('I want to be sure that Getting Started menu is working correctly', async ({ page }) => {
+  // test data 
+  const expectedMenuItems = [
+    'Installation',
+    'Writing tests',
+    'Generating tests',
+    'Running and debugging tests',
+    'Trace viewer',
+    'Setting up CI'
+  ];
+  // preconditions
+  await page.getByRole('link', { name: 'Get started' }).click();
+  
+  const getStartedMenu = page.locator('li', { hasText: 'Getting Started' }).first();
+  for (const item of expectedMenuItems) {
+    const menuItem = getStartedMenu.locator('li', { hasText: item });
+    await menuItem.click();
+    const header = page.locator('h1', { hasText: item });
+    await expect(header, `Header for ${item} is not visible`).toBeVisible();
+  }
+});
+
+test('I want to be sure that Getting Started menu is working correctly version 2', async ({ page }) => {
+  // test data 
+  const expectedMenuItems = [
+    'Installation',
+    'Writing tests',
+    'Generating tests',
+    'Running and debugging tests',
+    'Trace viewer',
+    'Setting up CI'
+  ];
+  // preconditions
+  await page.getByRole('link', { name: 'Get started' }).click();
+  
+  const getStartedMenu = page.locator('li', { hasText: 'Getting Started' }).first();
+  const allMenuItems = await getStartedMenu.locator('li').all();
+  for (const itemMenu of allMenuItems) {
+    await itemMenu.click();
+    const headerName = await page.locator('h1').textContent();
+    expect(expectedMenuItems, `Header for ${itemMenu} is not visible`).toContain(headerName);
+  }
+});
+
+test('I want to be sure that Getting Started menu has correct items', async ({ page }) => {
+  // test data 
+  const expectedMenuItems = [
+    'Installation',
+    'Writing tests',
+    'Generating tests',
+    'Running and debugging tests',
+    'Trace viewer',
+    'Setting up CI'
+  ];
+  // preconditions
+  await page.getByRole('link', { name: 'Get started' }).click();
+  
+  const getStartedMenu = page.locator('li', { hasText: 'Getting Started' }).first();
+  const allMenuItems = await getStartedMenu.locator('li').all();
+  for (const itemMenu of allMenuItems) {
+    const itemMenuName = await itemMenu.textContent();
+    expect(expectedMenuItems, `Header for ${itemMenu} is not visible`).toContain(itemMenuName);
+  }
 });
