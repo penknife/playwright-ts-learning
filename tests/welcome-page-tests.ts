@@ -1,35 +1,42 @@
-import test, { expect } from "@playwright/test";
-import { get } from "http";
+import { test as base, expect } from '@playwright/test';
+import WelcomePage from "../pages/welcome-page";
 
+// Define a test fixture for WelcomePage
+type WelcomePageFixtures = {
+  welcomePage: WelcomePage;
+};
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('https://playwright.dev');
+const test = base.extend<WelcomePageFixtures>({
+  welcomePage: async ({ page }, use) => {
+    await page.goto('https://playwright.dev');
+    const welcomePage = new WelcomePage(page);
+    await use(welcomePage);
+  },
 });
 
 test('Playwright site has title', async ({ page }) => {
   await expect(page, 'Playwright site does not have the expected title').toHaveTitle(/Playwright/);
 });
 
-test('Playwright site has a visible and working Get Started button', async ({ page }) => {
-  const getStarted = page.getByRole('link', { name: 'Get started' });
-  await getStarted.click();
+test('Playwright site has a visible and working Get Started button', async ({ welcomePage, page }) => {
+  await welcomePage.navigateToDocsByGetStartedBtn();
   await expect(page, 'Get started page is not opened after click on get Started button').toHaveURL(/.*docs\/intro/);
 });
 
-test('Playwright Get Started page: switch from Node.js to .NET in header language dropdown', async ({ page }) => {
-  await page.getByRole('link', { name: 'Get started' }).click();
+test('Playwright Get Started page: switch from Node.js to .NET in header language dropdown', async ({ welcomePage, page }) => {
+  const docsPage = await welcomePage.navigateToDocsByGetStartedBtn();
 
-  // The language dropdown should show Node.js by default
-  const languageDropdown = page.getByRole('button', { name: /Node\.js/ });
-  await languageDropdown.click();
+  await docsPage.headerNavigationMenu.selectProgrammingLanguage('.NET');
 
-  // Select the .NET option
-  const dotnetOption = page.getByRole('link', { name: '.NET' });
-  await dotnetOption.click();
+  // assert that .NET is selected variant 1
+  var actualLanguage = await docsPage.headerNavigationMenu.getSelectedLanguage();
+  expect(actualLanguage, 'Selected language is not .NET').toContain('.NET');
 
-  // Check that .NET is now selected (the dropdown button should show .NET)
-  const dotnetDropdown = page.getByRole('button', { name: /.NET/ });
-  await expect(dotnetDropdown).toBeVisible();
+  // assert that .NET is selected variant 2
+  await docsPage.headerNavigationMenu.verifyLanguageOptionSelected('.NET');
+
+  // assert that .NET is selected variant 3
+  await expect(await docsPage.headerNavigationMenu.getLanguageOptionsLocator('.NET')).toBeVisible();
 });
 
 test('Playwright Getting Started: select .NET and navigate to Writing tests', async ({ page }) => {
@@ -37,7 +44,6 @@ test('Playwright Getting Started: select .NET and navigate to Writing tests', as
 
   // Switch to .NET in the language dropdown
   const languageDropdown = page.getByRole('button', { name: /Node\.js/ });
-  await expect(languageDropdown).toBeVisible();
   await languageDropdown.click();
 
   const dotnetOption = page.getByRole('link', { name: '.NET' });
@@ -120,3 +126,4 @@ test('I want to be sure that Getting Started menu has correct items', async ({ p
     expect(expectedMenuItems, `Header for ${itemMenu} is not visible`).toContain(itemMenuName);
   }
 });
+// show exmaple with out expected array 
